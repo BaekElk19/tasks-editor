@@ -1,0 +1,71 @@
+{
+  "group": { "label": "分组(不可选)", "group": true },
+
+  "serial_group": { "label": "串行组", "group": true },
+
+  "parallel_group": { "label": "并行组", "group": true },
+
+  "stress": {
+    "label": "压力测试",
+    "fields": [
+      { "key": "CPUs", "label": "CPU数", "kind": "number", "required": true },
+      { "key": "StressMem", "label": "内存GB", "kind": "number", "required": true },
+      { "key": "StressTimes", "label": "时长(分钟)", "kind": "number", "required": false }
+    ]
+  },
+
+  "reboot": {
+    "label": "重启测试",
+    "fields": [
+      { "key": "Cycles", "label": "循环次数", "kind": "number", "required": true }
+    ]
+  },
+
+  "rtcwake": {
+    "label": "RTC唤醒",
+    "fields": [
+      { "key": "mode", "label": "模式", "kind": "enum", "values": ["s3", "s4"], "required": true },
+      { "key": "Cycles", "label": "循环次数", "kind": "number", "required": true },
+      { "key": "WakeSec", "label": "唤醒延迟(秒)", "kind": "number", "required": false }
+    ]
+  },
+
+  "serial": {
+    "label": "串口测试",
+    "fields": [
+      { "key": "port", "label": "端口", "kind": "text", "required": true },
+      { "key": "baud", "label": "波特率", "kind": "number", "required": false }
+    ]
+  },
+
+  "parallel": {
+    "label": "并口测试",
+    "fields": [
+      { "key": "port", "label": "端口", "kind": "text", "required": true }
+    ]
+  },
+
+  "network": {
+    "label": "网络测试",
+    "fields": [
+      { "key": "host", "label": "目标主机", "kind": "text", "required": true },
+      { "key": "count", "label": "次数", "kind": "number", "required": false },
+      { "key": "timeout", "label": "超时时间(秒)", "kind": "number", "required": false }
+    ]
+  },
+
+  "audio": {
+    "label": "音频测试",
+    "fields": [
+      { "key": "device", "label": "设备名", "kind": "text", "required": true },
+      { "key": "volume", "label": "音量", "kind": "number", "required": false }
+    ]
+  },
+
+  "manual": {
+    "label": "人工确认",
+    "fields": [
+      { "key": "note", "label": "说明", "kind": "text", "required": true }
+    ]
+  }
+}
