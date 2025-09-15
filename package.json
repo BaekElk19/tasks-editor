@@ -12,6 +12,7 @@
     "tauri:build": "tauri build"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.8.0",
     "element-plus": "^2.11.2",
     "vue": "^3.5.18"
   },

@@ -35,6 +35,27 @@ import Toolbar from './components/Toolbar.vue'
 import TaskTree from './components/TaskTree.vue'
 import TaskForm from './components/TaskForm.vue'
 import { validateAll } from './utils/validator.js'
+import { invoke } from "@tauri-apps/api/core";
+
+
+// 任务类型定义
+const taskTypes = ref({})
+
+// 加载 task_types.json（只通过 Rust 命令）
+async function loadTaskTypes() {
+  try {
+    const jsonStr = await invoke("get_task_types")
+    taskTypes.value = JSON.parse(jsonStr)
+    console.log("✅ 任务类型加载成功:", taskTypes.value)
+  } catch (err) {
+    console.error("❌ 加载任务类型失败:", err)
+    alert("加载任务类型失败: " + err)
+  }
+}
+
+onMounted(() => {
+  loadTaskTypes()
+})
 
 // 任务树数据
 const tasks = ref([
@@ -49,22 +70,6 @@ const tasks = ref([
 
 // 当前选中任务
 const selectedTask = ref(null)
-
-// 任务类型定义
-const taskTypes = ref({})
-
-// 加载 task_types.json
-onMounted(async () => {
-  try {
-    // 优先尝试读取 exe 同目录下的 task_types.json
-    const txt = await readTextFile('task_types.json')
-    taskTypes.value = JSON.parse(txt)
-  } catch (e) {
-    // 如果外部没有，就回退到内置的
-    const res = await fetch('./task_types.json')
-    taskTypes.value = await res.json()
-  }
-})
 
 /** 导入 JSON 文件 */
 function onImport(fileContent) {

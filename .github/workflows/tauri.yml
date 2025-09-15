@@ -6,9 +6,12 @@ on:
     tags:
       - "v*"   # 打 tag (如 v0.1.0) 才触发发布
 
+permissions:
+  contents: write   # ✅ 关键：允许创建 release
+
 jobs:
   build:
-    runs-on: windows-latest   # ✅ 只在 Windows 构建
+    runs-on: windows-latest   # 只在 Windows 构建
 
     steps:
       - uses: actions/checkout@v4
