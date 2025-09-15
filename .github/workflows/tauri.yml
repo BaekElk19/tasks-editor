@@ -4,20 +4,16 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - "v*"   # 只有打 tag (如 v0.1.0) 才触发发布
+      - "v*"   # 打 tag (如 v0.1.0) 才触发发布
 
 jobs:
   build:
-    strategy:
-      matrix:
-        platform: [windows-latest, ubuntu-latest, macos-latest]
-
-    runs-on: ${{ matrix.platform }}
+    runs-on: windows-latest   # ✅ 只在 Windows 构建
 
     steps:
       - uses: actions/checkout@v4
 
-      # 设置 Node.js
+      # 设置 Node.js (Vite 要求 Node >= 20.19)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -28,32 +24,32 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # Linux 依赖
-      - name: Install Linux dependencies
-        if: matrix.platform == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev
+      # 缓存 Cargo，避免每次全量编译导致超时
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src-tauri/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       # 安装依赖
       - name: Install dependencies
         run: npm install
 
-      # 构建 Tauri 应用
+      # 构建 Tauri 应用（加 --verbose，保证长时间编译时有日志输出）
       - name: Build Tauri App
-        run: npm run tauri:build
+        run: npm run tauri:build -- --verbose
 
-      # 上传 artifact（方便调试用）
+      # 上传 artifact（可在 Actions 界面下载 exe）
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: tauri-${{ matrix.platform }}
+          name: tauri-windows
           path: src-tauri/target/release/bundle/**
 
-      # 上传到 GitHub Release
+      # 上传到 GitHub Release（打 tag 时触发）
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
